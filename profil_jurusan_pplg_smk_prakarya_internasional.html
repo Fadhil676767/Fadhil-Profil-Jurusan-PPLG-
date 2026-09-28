@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PPLG - SMK Prakarya Internasional</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            blue: '#004B87',
+                            cyan: '#00D2FF',
+                            orange: '#FF6B00',
+                            dark: '#0B1120',
+                            card: '#161F33'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        /* Custom Glowing & Animations */
+        .glow-cyan { box-shadow: 0 0 20px rgba(0, 210, 255, 0.35); }
+        .glow-orange { box-shadow: 0 0 20px rgba(255, 107, 0, 0.35); }
+        .glass-panel {
+            background: rgba(22, 31, 51, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0B1120; }
+        ::-webkit-scrollbar-thumb { background: #004B87; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #00D2FF; }
+
+        canvas#gameCanvas {
+            background: linear-gradient(180deg, #0f172a 0%, #020617 100%);
+        }
+    </style>
+</head>
+<body class="bg-brand-dark text-slate-100 font-sans antialiased selection:bg-brand-cyan selection:text-black">
+
+    <!-- 1. HEADER (Semantic Tag) -->
+    <header class="relative min-h-screen flex flex-col justify-between overflow-hidden border-b border-slate-800">
+        <!-- Background Decorative Elements -->
+        <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(0,210,255,0.12),transparent_50%)]"></div>
+        <div class="absolute top-1/3 -left-20 w-96 h-96 bg-brand-blue/20 rounded-full blur-3xl"></div>
+        <div class="absolute bottom-10 right-10 w-80 h-80 bg-brand-orange/15 rounded-full blur-3xl"></div>
+
+        <!-- Top Notification Banner -->
+        <div class="bg-gradient-to-r from-brand-blue via-brand-cyan to-brand-orange text-xs sm:text-sm font-semibold py-2 px-4 text-center text-slate-950 flex items-center justify-center gap-2">
+            <span class="bg-slate-950 text-white px-2 py-0.5 rounded-full text-[10px]">PPDB 2026/2027</span>
+            <span>Pendaftaran Siswa Baru Jurusan PPLG SMK Prakarya Internasional Telah Dibuka!</span>
+        </div>
+
+        <!-- Main Header Branding Content -->
+        <div class="container mx-auto px-4 py-12 flex-1 flex flex-col justify-center items-center text-center relative z-10">
+            
+            <!-- Recreated Emblem Logo SMK Prakarya Internasional SVG -->
+            <div class="mb-6 relative group cursor-pointer transition-transform duration-500 hover:scale-105">
+                <div class="absolute -inset-1 bg-gradient-to-r from-brand-cyan to-brand-orange rounded-full blur opacity-50 group-hover:opacity-100 transition duration-500"></div>
+                <div class="relative w-36 h-36 sm:w-44 sm:h-44 bg-white rounded-full p-2 flex items-center justify-center shadow-2xl">
+                    <svg viewBox="0 0 300 300" class="w-full h-full drop-shadow-md">
+                        <!-- Outer Gear Circle -->
+                        <circle cx="150" cy="150" r="140" fill="none" stroke="#004B87" stroke-width="12" />
+                        <!-- Outer Text Path (Curved Text Representation) -->
+                        <path id="textPath1" d="M 30 150 A 120 120 0 1 1 270 150" fill="none" />
+                        <text font-size="12" font-weight="bold" fill="#1e293b">
+                            <textPath href="#textPath1" startOffset="50%" text-anchor="middle">
+                                KERJA KERAS • BELAJAR KERAS • MENJADI TEKNISI PROFESIONAL
+                            </textPath>
+                        </text>
+                        
+                        <!-- Inner Blue Gear Icon -->
+                        <g transform="translate(150,150)">
+                            <!-- Gear Teeth Loop -->
+                            <path d="M-60,-20 L-60,20 L-80,15 L-80,-15 Z 
+                                     M60,-20 L60,20 L80,15 L80,-15 Z
+                                     M-20,-60 L20,-60 L15,-80 L-15,-80 Z
+                                     M-20,60 L20,60 L15,80 L-15,80 Z
+                                     M-45,-45 L-20,-60 L-35,-75 L-60,-60 Z
+                                     M45,45 L20,60 L35,75 L60,60 Z
+                                     M-45,45 L-60,20 L-75,35 L-60,60 Z
+                                     M45,-45 L60,-20 L75,-35 L60,-60 Z" fill="#004B87" />
+                            <circle r="65" fill="#004B87" />
+                            <circle r="48" fill="#ffffff" />
+                        </g>
+
+                        <!-- Piston (Top Green) -->
+                        <g fill="none" stroke="#84cc16" stroke-width="4">
+                            <rect x="135" y="65" width="30" height="30" rx="3" fill="#ffffff" />
+                            <line x1="150" y1="95" x2="150" y2="175" />
+                            <circle cx="150" cy="175" r="7" fill="#84cc16" />
+                        </g>
+
+                        <!-- Lightning Volt (Left Red/Orange) -->
+                        <path d="M125 105 L105 145 L120 145 L100 185 L140 135 L122 135 Z" fill="#ef4444" stroke="#dc2626" stroke-width="1.5" />
+
+                        <!-- Atom Orbit (Right Yellow) -->
+                        <ellipse cx="170" cy="150" rx="28" ry="12" fill="none" stroke="#eab308" stroke-width="3" transform="rotate(-30 170 150)" />
+                        <ellipse cx="170" cy="150" rx="28" ry="12" fill="none" stroke="#eab308" stroke-width="3" transform="rotate(30 170 150)" />
+                        <circle cx="170" cy="150" r="4" fill="#eab308" />
+
+                        <!-- Waves Blue (Center) -->
+                        <path d="M100 160 Q115 150 130 160 T160 160" fill="none" stroke="#38bdf8" stroke-width="3" />
+                        <path d="M100 170 Q115 160 130 170 T160 170" fill="none" stroke="#38bdf8" stroke-width="3" />
+
+                        <!-- Bottom Text SMK-PI -->
+                        <text x="150" y="260" font-size="16" font-weight="900" fill="#004B87" text-anchor="middle" letter-spacing="2">• SMK-PI •</text>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Header Titles -->
+            <span class="px-4 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase bg-brand-blue/30 text-brand-cyan border border-brand-cyan/30 mb-4 inline-block">
+                Sekolah Menengah Kejuruan Terakreditasi A
+            </span>
+            <h1 class="text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-white mb-2">
+                SMK PRAKARYA INTERNASIONAL
+            </h1>
+            <h2 class="text-xl sm:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-brand-cyan via-blue-200 to-brand-orange mb-6">
+                PPLG — Pengembangan Perangkat Lunak & Gim
+            </h2>
+            <p class="max-w-2xl text-slate-300 text-sm sm:text-base leading-relaxed mb-8">
+                Mencetak Generasi Developer Profesional, Software Engineer, dan Game Creator yang Siap Bersaing di Industri Digital Global.
+            </p>
+
+            <!-- Quick Action Buttons -->
+            <div class="flex flex-wrap justify-center gap-4">
+                <a href="#profil" class="px-6 py-3 rounded-xl bg-gradient-to-r from-brand-blue to-brand-cyan text-slate-950 font-bold hover:shadow-lg hover:shadow-brand-cyan/25 transition-all transform hover:-translate-y-0.5">
+                    Jelajahi Profil
+                </a>
+                <a href="#minigame" class="px-6 py-3 rounded-xl bg-brand-card hover:bg-slate-800 text-brand-orange font-bold border border-brand-orange/40 hover:border-brand-orange transition-all flex items-center gap-2">
+                    <i class="fa-solid font-bold fa-gamepad"></i> Mainkan Mini Game
+                </a>
+            </div>
+        </div>
+
+        <!-- Bottom Stat Highlights -->
+        <div class="bg-slate-950/80 backdrop-blur-md border-t border-slate-800/80 py-4">
+            <div class="container mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                <div>
+                    <div class="text-2xl font-bold text-brand-cyan">100%</div>
+                    <div class="text-xs text-slate-400">Kurikulum Industri</div>
+                </div>
+                <div>
+                    <div class="text-2xl font-bold text-brand-orange">4+</div>
+                    <div class="text-xs text-slate-400">Lab Komputer High-Spec</div>
+                </div>
+                <div>
+                    <div class="text-2xl font-bold text-brand-cyan">25+</div>
+                    <div class="text-xs text-slate-400">Mitra Industri IT</div>
+                </div>
+                <div>
+                    <div class="text-2xl font-bold text-emerald-400">A</div>
+                    <div class="text-xs text-slate-400">Akreditasi Unggul</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 2. NAVIGATION (Semantic Tag) -->
+    <nav class="sticky top-0 z-50 bg-brand-dark/90 backdrop-blur-md border-b border-slate-800 shadow-xl">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <!-- Brand Small Logo -->
+                <a href="#" class="flex items-center gap-3 font-bold text-lg text-white">
+                    <span class="w-8 h-8 rounded-lg bg-brand-blue flex items-center justify-center text-brand-cyan text-sm border border-brand-cyan/30">
+                        PI
+                    </span>
+                    <span class="tracking-wider">PPLG <span class="text-brand-orange">SMK-PI</span></span>
+                </a>
+
+                <!-- Desktop Nav Links -->
+                <div class="hidden md:flex space-x-1 text-sm font-semibold text-slate-300">
+                    <a href="#profil" class="px-3 py-2 rounded-lg hover:text-brand-cyan hover:bg-slate-800/60 transition">Profil</a>
+                    <a href="#kompetensi" class="px-3 py-2 rounded-lg hover:text-brand-cyan hover:bg-slate-800/60 transition">Kompetensi</a>
+                    <a href="#prospek" class="px-3 py-2 rounded-lg hover:text-brand-cyan hover:bg-slate-800/60 transition">Prospek Kerja</a>
+                    <a href="#artikel" class="px-3 py-2 rounded-lg hover:text-brand-cyan hover:bg-slate-800/60 transition">Artikel Kegiatan</a>
+                    <a href="#minigame" class="px-3 py-2 rounded-lg text-brand-orange hover:bg-brand-orange/10 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-gamepad"></i> Mini Game
+                    </a>
+                    <a href="#kontak" class="px-3 py-2 rounded-lg hover:text-brand-cyan hover:bg-slate-800/60 transition">Kontak</a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button id="mobileMenuBtn" class="md:hidden text-slate-300 hover:text-white focus:outline-none p-2">
+                    <i class="fa-solid fa-bars text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Mobile Dropdown Menu -->
+            <div id="mobileMenu" class="hidden md:hidden pb-4 space-y-2 text-sm font-medium border-t border-slate-800 pt-2">
+                <a href="#profil" class="block px-3 py-2 rounded-md hover:bg-slate-800 text-slate-200">Profil</a>
+                <a href="#kompetensi" class="block px-3 py-2 rounded-md hover:bg-slate-800 text-slate-200">Kompetensi</a>
+                <a href="#prospek" class="block px-3 py-2 rounded-md hover:bg-slate-800 text-slate-200">Prospek Kerja</a>
+                <a href="#artikel" class="block px-3 py-2 rounded-md hover:bg-slate-800 text-slate-200">Artikel Kegiatan</a>
+                <a href="#minigame" class="block px-3 py-2 rounded-md bg-brand-orange/20 text-brand-orange">Mini Game PPLG</a>
+                <a href="#kontak" class="block px-3 py-2 rounded-md hover:bg-slate-800 text-slate-200">Kontak</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTAINER & ASIDE WRAPPER -->
+    <div class="container mx-auto px-4 py-12 grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+        <!-- 3. MAIN (Semantic Tag) -->
+        <main class="lg:col-span-8 space-y-16">
+
+            <!-- SECTION: PENGERTIAN PPLG -->
+            <section id="profil" class="glass-panel p-6 sm:p-8 rounded-2xl relative overflow-hidden">
+                <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-brand-blue/20 rounded-full blur-2xl"></div>
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-10 h-10 rounded-xl bg-brand-blue/40 border border-brand-cyan/40 flex items-center justify-center text-brand-cyan">
+                        <i class="fa-solid fa-code text-lg"></i>
+                    </div>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Apa itu Jurusan PPLG?</h2>
+                </div>
+                
+                <p class="text-slate-300 leading-relaxed mb-4">
+                    <strong class="text-brand-cyan">PPLG (Pengembangan Perangkat Lunak dan Gim)</strong> adalah program keahlian di SMK Prakarya Internasional yang berfokus pada pemahaman komprehensif terkait pembuatan perangkat lunak (software), aplikasi web, aplikasi mobile, serta pengembangan video game modern.
+                </p>
+                <p class="text-slate-300 leading-relaxed mb-6">
+                    Siswa tidak hanya diajarkan menulis baris kode (coding), namun juga melatih pemikiran logis (*computational thinking*), perancangan UI/UX yang menarik, manajemen basis data, serta metode pengembangan aplikasi profesional seperti Agile/Scrum.
+                </p>
+
+                <!-- Key Highlights Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                    <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800">
+                        <i class="fa-solid fa-laptop-code text-brand-cyan text-2xl mb-2"></i>
+                        <h4 class="font-bold text-white mb-1">Software Development</h4>
+                        <p class="text-xs text-slate-400">Merancang dan membangun sistem informasi dan aplikasi web modern.</p>
+                    </div>
+                    <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800">
+                        <i class="fa-solid fa-gamepad text-brand-orange text-2xl mb-2"></i>
+                        <h4 class="font-bold text-white mb-1">Game Development</h4>
+                        <p class="text-xs text-slate-400">Membuat game 2D & 3D interaktif menggunakan engine populer seperti Unity / Godot.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION: KOMPETENSI YANG DIPELAJARI -->
+            <section id="kompetensi" class="space-y-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Kompetensi Keahlian</h2>
+                        <p class="text-sm text-slate-400">Materi pembelajaran terkini yang disesuaikan dengan kebutuhan industri IT.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <!-- Cards -->
+                    <div class="p-5 rounded-2xl glass-panel hover:border-brand-cyan/50 transition duration-300">
+                        <div class="w-10 h-10 rounded-lg bg-blue-500/10 text-blue-400 flex items-center justify-center text-xl mb-3">
+                            <i class="fa-brands fa-html5"></i>
+                        </div>
+                        <h3 class="font-bold text-lg text-white mb-2">Web Development</h3>
+                        <p class="text-xs text-slate-400 leading-relaxed">
+                            Menguasai HTML5, CSS3, JavaScript, Tailwind CSS, serta framework modern seperti React & Laravel untuk aplikasi full-stack.
+                        </p>
+                    </div>
+
+                    <div class="p-5 rounded-2xl glass-panel hover:border-brand-orange/50 transition duration-300">
+                        <div class="w-10 h-10 rounded-lg bg-orange-500/10 text-brand-orange flex items-center justify-center text-xl mb-3">
+                            <i class="fa-solid fa-vr-cardboard"></i>
+                        </div>
+                        <h3 class="font-bold text-lg text-white mb-2">Game Mechanics & Physics</h3>
+                        <p class="text-xs text-slate-400 leading-relaxed">
+                            Pembuatan logika game 2D/3D, desain karakter, sprites, animasi, sprite rigging, serta pemrograman skrip C# / C++.
+                        </p>
+                    </div>
+
+                    <div class="p-5 rounded-2xl glass-panel hover:border-emerald-500/50 transition duration-300">
+                        <div class="w-10 h-10 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-xl mb-3">
+                            <i class="fa-solid fa-database"></i>
+                        </div>
+                        <h3 class="font-bold text-lg text-white mb-2">Database & Cloud Management</h3>
+                        <p class="text-xs text-slate-400 leading-relaxed">
+                            Pemodelan database relasional (MySQL, PostgreSQL) dan NoSQL (MongoDB), RESTful API, serta manajemen server.
+                        </p>
+                    </div>
+
+                    <div class="p-5 rounded-2xl glass-panel hover:border-purple-500/50 transition duration-300">
+                        <div class="w-10 h-10 rounded-lg bg-purple-500/10 text-purple-400 flex items-center justify-center text-xl mb-3">
+                            <i class="fa-solid fa-pen-nib"></i>
+                        </div>
+                        <h3 class="font-bold text-lg text-white mb-2">UI/UX Design & Prototyping</h3>
+                        <p class="text-xs text-slate-400 leading-relaxed">
+                            Perancangan antarmuka aplikasi yang intuitif, user journey, wireframing, dan interactive prototyping menggunakan Figma.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION: PROSPEK KERJA -->
+            <section id="prospek" class="glass-panel p-6 sm:p-8 rounded-2xl space-y-6">
+                <div>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Prospek Karir Lulusan</h2>
+                    <p class="text-sm text-slate-400">Peluang kerja yang luas di berbagai sektor industri digital & startup.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-800 hover:scale-105 transition duration-300">
+                        <div class="text-brand-cyan text-xl font-extrabold mb-1">01. Web & App Developer</div>
+                        <p class="text-xs text-slate-400">Membangun situs web bisnis, e-commerce, dan aplikasi mobile enterprise.</p>
+                    </div>
+                    <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-800 hover:scale-105 transition duration-300">
+                        <div class="text-brand-orange text-xl font-extrabold mb-1">02. Game Programmer</div>
+                        <p class="text-xs text-slate-400">Menyusun logika permainan di game studio lokal maupun internasional.</p>
+                    </div>
+                    <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-800 hover:scale-105 transition duration-300">
+                        <div class="text-emerald-400 text-xl font-extrabold mb-1">03. UI/UX Designer</div>
+                        <p class="text-xs text-slate-400">Merancang tampilan produk digital agar nyaman dan estetik bagi pengguna.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ARTICLE (Semantic Tag): Artikel Singkat Kegiatan Siswa -->
+            <article id="artikel" class="glass-panel p-6 sm:p-8 rounded-2xl border-l-4 border-l-brand-cyan space-y-4">
+                <div class="flex items-center gap-2 text-xs font-bold text-brand-cyan uppercase tracking-wider">
+                    <i class="fa-solid fa-newspaper"></i> Artikel & Kegiatan Siswa
+                </div>
+                <h3 class="text-2xl font-bold text-white leading-snug">
+                    Keseruan "PI CodeJam & Project Showcase 2026": Karyakan Software & Game Buatan Siswa PPLG
+                </h3>
+                <div class="flex items-center gap-4 text-xs text-slate-400">
+                    <span><i class="fa-regular fa-calendar"></i> 24 Februari 2026</span>
+                    <span><i class="fa-regular fa-user"></i> Tim Jurnalistik SMK-PI</span>
+                </div>
+                <p class="text-slate-300 text-sm leading-relaxed">
+                    Siswa-siswi Jurusan PPLG SMK Prakarya Internasional kembali menunjukkan kebolehannya dalam ajang tahunan <strong>PI CodeJam</strong>. Dalam waktu 48 jam, para siswa ditantang untuk menciptakan produk perangkat lunak dan game interaktif ber tema solusi edukasi dan lingkungan.
+                </p>
+                <p class="text-slate-300 text-sm leading-relaxed">
+                    Acara ini dihadiri oleh perwakilan perusahaan IT mitra sekolah yang bertindak langsung sebagai dewan juri sekaligus merekrut bakat-bakat muda terbaik dari jurusan PPLG.
+                </p>
+                <div class="pt-2">
+                    <span class="inline-block bg-slate-800 text-slate-300 text-xs px-3 py-1 rounded-full border border-slate-700">#PPLGBisa</span>
+                    <span class="inline-block bg-slate-800 text-slate-300 text-xs px-3 py-1 rounded-full border border-slate-700">#SMKPrakaryaInternasional</span>
+                    <span class="inline-block bg-slate-800 text-slate-300 text-xs px-3 py-1 rounded-full border border-slate-700">#GameDevIndo</span>
+                </div>
+            </article>
+
+            <!-- SECTION: INTERACTIVE MINI GAME -->
+            <section id="minigame" class="glass-panel p-6 sm:p-8 rounded-2xl border border-brand-orange/40 relative">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                    <div>
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-orange/20 text-brand-orange text-xs font-bold mb-1">
+                            <i class="fa-solid fa-gamepad"></i> Mini Game PPLG
+                        </div>
+                        <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Code & Bug Catcher 🚀</h2>
+                        <p class="text-xs text-slate-400">Tangkap kode yang benar (<span class="text-emerald-400">&lt;/&gt;, JS, PY</span>) & hindari Bug merah (<span class="text-red-400">🐛</span>)!</p>
+                    </div>
+
+                    <!-- Scoreboard -->
+                    <div class="flex items-center gap-4 bg-slate-900/90 px-4 py-2 rounded-xl border border-slate-800">
+                        <div class="text-center">
+                            <div class="text-[10px] text-slate-400 uppercase">Skor Anda</div>
+                            <div id="gameScore" class="text-xl font-bold text-brand-cyan">0</div>
+                        </div>
+                        <div class="w-px h-8 bg-slate-800"></div>
+                        <div class="text-center">
+                            <div class="text-[10px] text-slate-400 uppercase">Skor Tertinggi</div>
+                            <div id="gameHighScore" class="text-xl font-bold text-brand-orange">0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Game Canvas Box -->
+                <div class="relative w-full overflow-hidden rounded-xl border border-slate-800 shadow-2xl">
+                    <canvas id="gameCanvas" class="w-full h-72 sm:h-96 block cursor-crosshair"></canvas>
+                    
+                    <!-- Overlay Start/Restart Screen -->
+                    <div id="gameOverlay" class="absolute inset-0 bg-slate-950/85 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center z-10">
+                        <i class="fa-solid fa-bug text-5xl text-brand-orange mb-3 animate-bounce"></i>
+                        <h3 class="text-2xl font-bold text-white mb-2">Siap Menjadi PPLG Developer?</h3>
+                        <p class="text-xs text-slate-300 max-w-md mb-6">
+                            Gunakan tombol Panah Kiri/Kanan (<span class="text-brand-cyan">← / →</span>) atau **Sentuh Layar** untuk menggerakkan Keranjang Kode.
+                        </p>
+                        <button id="startGameBtn" class="px-8 py-3 rounded-xl bg-gradient-to-r from-brand-orange to-amber-500 text-slate-950 font-extrabold text-sm shadow-lg hover:brightness-110 transition transform hover:scale-105">
+                            Mulai Permainan
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Touch Controls for Mobile Game Players -->
+                <div class="mt-4 flex md:hidden gap-3 justify-center">
+                    <button id="btnLeft" class="flex-1 py-3 bg-slate-800 active:bg-brand-blue rounded-xl text-white font-bold text-lg border border-slate-700">
+                        <i class="fa-solid fa-arrow-left"></i> Kiri
+                    </button>
+                    <button id="btnRight" class="flex-1 py-3 bg-slate-800 active:bg-brand-blue rounded-xl text-white font-bold text-lg border border-slate-700">
+                        Kanan <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- 4. ASIDE (Semantic Tag) -->
+        <aside class="lg:col-span-4 space-y-6">
+            
+            <!-- Information Panel PPDB -->
+            <div class="glass-panel p-6 rounded-2xl border-t-4 border-t-brand-orange">
+                <h3 class="text-lg font-bold text-white mb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-bullhorn text-brand-orange"></i> Informasi Tambahan
+                </h3>
+                <div class="space-y-4 text-xs text-slate-300">
+                    <div class="p-3 rounded-lg bg-slate-900/80 border border-slate-800">
+                        <span class="text-brand-cyan font-semibold block mb-1">📢 PPDB Gelombang 1</span>
+                        Dapatkan beasiswa potongan DSP khusus pendaftar jurusan PPLG SMK Prakarya Internasional.
+                    </div>
+                    <div class="p-3 rounded-lg bg-slate-900/80 border border-slate-800">
+                        <span class="text-brand-orange font-semibold block mb-1">🎮 Ekstrakulikuler E-Sports & Game Dev</span>
+                        Wadah pengasahan minat pembuatan game dan kompetisi game edukatif secara berkala.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Info & Lab Facilities -->
+            <div class="glass-panel p-6 rounded-2xl space-y-4">
+                <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-microchip text-brand-cyan"></i> Fasilitas Unggulan
+                </h3>
+                <ul class="text-xs text-slate-300 space-y-2.5">
+                    <li class="flex items-center gap-2">
+                        <i class="fa-solid fa-check text-emerald-400"></i> Lab Komputer i7 + GPU Gaming Spec
+                    </li>
+                    <li class="flex items-center gap-2">
+                        <i class="fa-solid fa-check text-emerald-400"></i> Akses Internet Dedicated High-Speed
+                    </li>
+                    <li class="flex items-center gap-2">
+                        <i class="fa-solid fa-check text-emerald-400"></i> Ruang Diskusi Studio Agile
+                    </li>
+                    <li class="flex items-center gap-2">
+                        <i class="fa-solid fa-check text-emerald-400"></i> Lisensi Software Industri Resmi
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Contact Box Inside Aside -->
+            <div id="kontak" class="glass-panel p-6 rounded-2xl bg-gradient-to-br from-brand-card to-brand-blue/30">
+                <h3 class="text-lg font-bold text-white mb-3">Hubungi PPLG SMK-PI</h3>
+                <p class="text-xs text-slate-300 mb-4">Ingin tahu lebih lanjut seputar program pembelajaran atau kerjasama industri?</p>
+                
+                <div class="space-y-2 text-xs text-slate-300">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-location-dot text-brand-orange"></i>
+                        <span>Jl. Inhoftank No. 146, Bandung</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-envelope text-brand-cyan"></i>
+                        <span>info@smkprakaryainternasional.sch.id</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-phone text-emerald-400"></i>
+                        <span>(022) 5204163</span>
+                    </div>
+                </div>
+            </div>
+
+        </aside>
+    </div>
+
+    <!-- 5. FOOTER (Semantic Tag) -->
+    <footer class="bg-slate-950 border-t border-slate-800 text-slate-400 py-8 text-xs">
+        <div class="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-7 h-7 rounded bg-brand-blue text-brand-cyan flex items-center justify-center font-bold text-xs">PI</div>
+                <span>SMK Prakarya Internasional - Jurusan PPLG</span>
+            </div>
+            <div>
+                Copyright &copy; 2026 SMK Prakarya Internasional. All Rights Reserved.
+            </div>
+            <div class="flex gap-4 text-base">
+                <a href="#" class="hover:text-brand-cyan"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#" class="hover:text-brand-cyan"><i class="fa-brands fa-youtube"></i></a>
+                <a href="#" class="hover:text-brand-cyan"><i class="fa-brands fa-github"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile Navigation Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // ==========================================
+        // MINI GAME LOGIC: PPLG BUG & CODE CATCHER
+        // ==========================================
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const overlay = document.getElementById('gameOverlay');
+        const startBtn = document.getElementById('startGameBtn');
+        const scoreEl = document.getElementById('gameScore');
+        const highScoreEl = document.getElementById('gameHighScore');
+
+        let isPlaying = false;
+        let score = 0;
+        let highScore = 0;
+        let animationFrameId;
+
+        // Player Basket Object
+        const player = {
+            x: 0,
+            y: 0,
+            width: 70,
+            height: 18,
+            speed: 7,
+            dx: 0
+        };
+
+        // Falling Code Items & Bugs
+        let items = [];
+        const itemTypes = [
+            { text: '</>', score: 10, color: '#00D2FF', isBug: false },
+            { text: 'JS', score: 15, color: '#f7df1e', isBug: false },
+            { text: 'PY', score: 15, color: '#38bdf8', isBug: false },
+            { text: '🐛', score: -20, color: '#ef4444', isBug: true }
+        ];
+
+        // Resize Canvas dynamically
+        function resizeCanvas() {
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+            player.y = canvas.height - 35;
+            if (!isPlaying) {
+                player.x = canvas.width / 2 - player.width / 2;
+            }
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // Audio Effects (Web Audio API Synthesizer - No External File dependency)
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playSound(freq, type = 'sine', duration = 0.1) {
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = type;
+                osc.frequency.value = freq;
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch (e) {
+                // Audio Context fallback if user hasn't interacted
+            }
+        }
+
+        // Spawn falling code element or bug
+        function spawnItem() {
+            const randomType = itemTypes[Math.floor(Math.random() * itemTypes.length)];
+            items.push({
+                x: Math.random() * (canvas.width - 40) + 10,
+                y: -20,
+                speed: 2 + Math.random() * 3,
+                ...randomType
+            });
+        }
+
+        // Key Listeners
+        const keys = {};
+        window.addEventListener('keydown', (e) => keys[e.key] = true);
+        window.addEventListener('keyup', (e) => keys[e.key] = false);
+
+        // Touch Control Listeners
+        const btnLeft = document.getElementById('btnLeft');
+        const btnRight = document.getElementById('btnRight');
+
+        btnLeft.addEventListener('touchstart', (e) => { e.preventDefault(); keys['ArrowLeft'] = true; });
+        btnLeft.addEventListener('touchend', () => { keys['ArrowLeft'] = false; });
+        btnRight.addEventListener('touchstart', (e) => { e.preventDefault(); keys['ArrowRight'] = true; });
+        btnRight.addEventListener('touchend', () => { keys['ArrowRight'] = false; });
+
+        // Touch drag directly on canvas
+        canvas.addEventListener('touchmove', (e) => {
+            const touchX = e.touches[0].clientX - canvas.getBoundingClientRect().left;
+            player.x = touchX - player.width / 2;
+        });
+
+        // Main Game Loop
+        function gameLoop() {
+            if (!isPlaying) return;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Handle player movement
+            if (keys['ArrowLeft'] || keys['a']) player.x -= player.speed;
+            if (keys['ArrowRight'] || keys['d']) player.x += player.speed;
+
+            // Keep inside boundaries
+            if (player.x < 0) player.x = 0;
+            if (player.x + player.width > canvas.width) player.x = canvas.width - player.width;
+
+            // Draw Player Basket (IDE Catcher)
+            ctx.fillStyle = '#004B87';
+            ctx.beginPath();
+            ctx.roundRect(player.x, player.y, player.width, player.height, 8);
+            ctx.fill();
+            ctx.strokeStyle = '#00D2FF';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Player Text
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 10px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('IDE-PPLG', player.x + player.width / 2, player.y + 12);
+
+            // Spawn Chance
+            if (Math.random() < 0.03) spawnItem();
+
+            // Update & Draw Items
+            for (let i = items.length - 1; i >= 0; i--) {
+                const item = items[i];
+                item.y += item.speed;
+
+                // Draw Item Text/Emoji
+                ctx.fillStyle = item.color;
+                ctx.font = item.isBug ? '20px sans-serif' : 'bold 16px monospace';
+                ctx.textAlign = 'center';
+                ctx.fillText(item.text, item.x, item.y);
+
+                // Collision Detection with Catcher
+                if (
+                    item.y >= player.y - 10 &&
+                    item.y <= player.y + player.height &&
+                    item.x >= player.x - 10 &&
+                    item.x <= player.x + player.width + 10
+                ) {
+                    score += item.score;
+                    if (score < 0) score = 0;
+                    scoreEl.innerText = score;
+
+                    if (item.isBug) {
+                        playSound(150, 'sawtooth', 0.2); // Bad sound
+                    } else {
+                        playSound(587, 'sine', 0.1); // Good sound
+                    }
+
+                    items.splice(i, 1);
+                    continue;
+                }
+
+                // Remove out of bounds items
+                if (item.y > canvas.height + 20) {
+                    items.splice(i, 1);
+                }
+            }
+
+            animationFrameId = requestAnimationFrame(gameLoop);
+        }
+
+        function startGame() {
+            score = 0;
+            scoreEl.innerText = score;
+            items = [];
+            isPlaying = true;
+            overlay.classList.add('hidden');
+            player.x = canvas.width / 2 - player.width / 2;
+            gameLoop();
+
+            // Stop Game Automatically After 30 Seconds for Highscore
+            setTimeout(() => {
+                if (isPlaying) endGame();
+            }, 30000);
+        }
+
+        function endGame() {
+            isPlaying = false;
+            cancelAnimationFrame(animationFrameId);
+            if (score > highScore) {
+                highScore = score;
+                highScoreEl.innerText = highScore;
+            }
+            overlay.classList.remove('hidden');
+            overlay.querySelector('h3').innerText = `Waktu Habis! Skor Anda: ${score}`;
+            startBtn.innerText = 'Main Lagi';
+        }
+
+        startBtn.addEventListener('click', startGame);
+    </script>
+</body>
+</html>
